@@ -1,3 +1,5 @@
 flask
+torchaudio
 ttslearn
 huggingsound
+speechbrain

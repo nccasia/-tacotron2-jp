@@ -1,8 +1,6 @@
 # tacotron2-jp
 
 
-
-
 - Build image and run container:
 ```
 docker-compose up --build
@@ -21,3 +19,12 @@ docker-compose up --build
 - Response:
 
 ![image](images/220071957-30dfbb36-0b1a-485d-9834-a4898b600688.png)
+
+- Call Speech-to-Text API with language=vietnamese:
+
+![image](images/220324995-fdf353ff-061b-4995-9130-4cdd962e31e9.png)
+
+- Call Text-to-Speech API with language=english:
+
+![image](images/220331699-ed4870ae-1ac6-4005-854a-48447259eb86.png)
+

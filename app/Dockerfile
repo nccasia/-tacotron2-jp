@@ -14,8 +14,6 @@ RUN useradd -ms /bin/bash apprunner
 # install Docker tools (cli, buildx, compose)
 COPY --from=gloursdocker/docker / /
 
-USER apprunner
-
 WORKDIR /app
 
 ENV FLASK_APP=app.py
