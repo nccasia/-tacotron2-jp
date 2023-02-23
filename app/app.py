@@ -1,11 +1,7 @@
 from flask import Flask, request, send_file
-from ttslearn.dnntts import DNNTTS
 from huggingsound import SpeechRecognitionModel
 import logging, os
-import soundfile as sf
-import torchaudio
-from speechbrain.pretrained import Tacotron2
-from speechbrain.pretrained import HIFIGAN
+from gtts import gTTS
 
 app = Flask(__name__)
 logger = logging.getLogger()
@@ -26,46 +22,36 @@ def stt():
     file_name = "Audio.wav"
     audio_file.save(file_name)
     audio_paths = [file_name]
-    model = SpeechRecognitionModel(models[language])
-    transcriptions = model.transcribe(audio_paths)
-    
-    os.remove(file_name)
-    
-    text = ' .'.join(list(t['transcription'] for t in transcriptions))
+    try:
+        model = SpeechRecognitionModel(models[language])
+        transcriptions = model.transcribe(audio_paths)
+        text = ' .'.join(list(t['transcription'] for t in transcriptions))
+    except Exception:
+        return "Sorry!! We don't support this language yet T_T"
+    finally:
+        os.remove(file_name)
     
     return text
 
 @app.route("/tts", methods = ['GET', 'POST'])
 def tts():
+    langs = {
+        "japanese" : "ja",
+        "vietnamese" : "vi",
+        "english" : "en"
+    }
     language = request.args.get('language', default='japanese', type=str)
     text = request.form.get('text', default='', type=str)
     
     filename = "Audio.wav"
     
-    try:
+    if(os.path.exists(filename)):
         os.remove(filename)
+
+    try:
+        output = gTTS(text,lang=langs[language], slow=False)
+        output.save(filename)
     except Exception:
-        pass
-    
-    if language == 'japanese':
-        print("Text-to-Speech JP")
-        engine = DNNTTS()
-        wav, sr = engine.tts(text)
-        sf.write(filename, wav, sr)
-        
-    elif language == 'english':
-        print("Text-to-Speech EN")
-        
-        tacotron2 = Tacotron2.from_hparams(source="speechbrain/tts-tacotron2-ljspeech")
-        hifi_gan = HIFIGAN.from_hparams(source="speechbrain/tts-hifigan-ljspeech")
-
-        mel_output, mel_length, alignment = tacotron2.encode_text(text)
-
-        waveforms = hifi_gan.decode_batch(mel_output)
-        
-        torchaudio.save(filename, waveforms.squeeze(1), 22050)
-        
-    else:
         return "Sorry!! We don't support this language yet T_T"
         
     return send_file(filename)
