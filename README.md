@@ -29,4 +29,5 @@ docker-compose up --build
 ![image](images/220331699-ed4870ae-1ac6-4005-854a-48447259eb86.png)
 
 - Call text sentiment analyst in Japanese API:
+
 ![image](images/223993086-2c37145b-0eb4-4a26-9453-6109f0d36b43.png)
